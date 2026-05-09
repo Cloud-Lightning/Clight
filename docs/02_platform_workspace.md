@@ -27,7 +27,13 @@ Clight provides reusable source and headers. The final firmware CMake normally b
 - external vendor stacks
 - flash or RAM execution mode
 
-The checked-in platform CMake files are templates only. They should not pretend to build a real board without the generated files.
+The checked-in platform CMake files are templates only. Without a local board package they configure cleanly and print guidance, but they do not create a firmware target.
+
+Template variables:
+
+- HPM: set `CLIGHT_HPM_BOARD=<board_name>` or `CLIGHT_HPM_BOARD_DIR=<absolute path>`.
+- STM32: set `CLIGHT_STM32_BOARD=<board_name>` or `CLIGHT_STM32_BOARD_DIR=<absolute path>`.
+- ESP32: set `CLIGHT_ESP32_TARGET=esp32s3` if needed, activate ESP-IDF so `IDF_PATH` and the target compiler are in PATH, then run `idf.py` from `platforms/esp32`.
 
 ## Public Include Style
 
