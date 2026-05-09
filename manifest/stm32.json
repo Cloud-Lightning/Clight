@@ -1,0 +1,287 @@
+{
+  "board": "stm32",
+  "modules": {
+    "adc": {
+      "generated": {
+        "append_methods": [
+          "Status routeStm32Trigger(std::uint32_t trigger, std::uint32_t edge = BSP_ADC16_STM32_TRIGGER_EDGE_RISING) const\n    {\n        const AdcTriggerRoute route{.input = trigger, .output = edge, .invert = BSP_DISABLE, .type = BSP_ADC16_TRIGGER_OUTPUT_SAME_AS_INPUT};\n        return routeSequenceTrigger(route);\n    }",
+          "Status routeTimer2Trgo() const { return routeStm32Trigger(BSP_ADC16_STM32_TRIGGER_TIM2_TRGO); }",
+          "Status routeInjectedStm32Trigger(std::uint32_t trigger, std::uint32_t edge = BSP_ADC16_STM32_INJECTED_EDGE_RISING) const\n    {\n        const AdcTriggerRoute route{.input = trigger, .output = edge, .invert = BSP_DISABLE, .type = BSP_ADC16_TRIGGER_OUTPUT_SAME_AS_INPUT};\n        return routePreemptionTrigger(route);\n    }",
+          "Status routeInjectedTimer1Trgo2() const { return routeInjectedStm32Trigger(BSP_ADC16_STM32_INJECTED_TRIGGER_TIM1_TRGO2); }",
+          "Status routeInjectedTimer8Trgo2() const { return routeInjectedStm32Trigger(BSP_ADC16_STM32_INJECTED_TRIGGER_TIM8_TRGO2); }"
+        ]
+      },
+      "instances": {
+        "Main": "BSP_ADC16_MAIN"
+      }
+    },
+    "can": {
+      "generated": {
+        "extra_helpers": [
+          "    static inline bsp_fdcan_frame_t toInternal(const CanFrame &frame)\n    {\n        bsp_fdcan_frame_t internal{};\n        internal.id = frame.id;\n        internal.dlc = frame.dlc;\n        internal.extended_id = frame.extendedId;\n        internal.remote_frame = frame.remoteFrame;\n        internal.fd_frame = frame.fdFrame;\n        internal.bitrate_switch = frame.bitrateSwitch;\n        internal.error_state_indicator = frame.errorStateIndicator;\n        std::memcpy(internal.data, frame.data.data(), frame.data.size());\n        return internal;\n    }",
+          "    static inline CanFrame fromInternal(const bsp_fdcan_frame_t &frame)\n    {\n        CanFrame publicFrame{};\n        publicFrame.id = frame.id;\n        publicFrame.dlc = frame.dlc;\n        publicFrame.extendedId = frame.extended_id;\n        publicFrame.remoteFrame = frame.remote_frame;\n        publicFrame.fdFrame = frame.fd_frame;\n        publicFrame.bitrateSwitch = frame.bitrate_switch;\n        publicFrame.errorStateIndicator = frame.error_state_indicator;\n        std::memcpy(publicFrame.data.data(), frame.data, publicFrame.data.size());\n        return publicFrame;\n    }"
+        ],
+        "header_include": "bsp/interface/bsp_fdcan.h",
+        "include": "fdcan.hpp",
+        "internal_id_type": "bsp_fdcan_instance_t",
+        "methods": [
+          "Status init(bool loopback = false) const { return statusFromInternal(bsp_fdcan_init(toInternal(id_), loopback)); }",
+          "Status defaultConfig(bsp_fdcan_config_t &config, bool enableCanFd = false) const { return statusFromInternal(bsp_fdcan_get_default_config(toInternal(id_), &config, enableCanFd)); }",
+          "Status clock(std::uint32_t &frequencyHz) const { return statusFromInternal(bsp_fdcan_get_clock(toInternal(id_), &frequencyHz)); }",
+          "Status configureBitrate(bsp_fdcan_config_t &config, std::uint32_t nominalBitrate, std::uint32_t dataBitrate = 0U) const { return statusFromInternal(bsp_fdcan_config_bitrate(toInternal(id_), &config, nominalBitrate, dataBitrate)); }",
+          "Status init(const bsp_fdcan_config_t &config) const { return statusFromInternal(bsp_fdcan_init_ex(toInternal(id_), &config)); }",
+          "Status initBitrate(std::uint32_t nominalBitrate, bool loopback = false) const\n    {\n        bsp_fdcan_config_t config{};\n        const auto configStatus = defaultConfig(config, false);\n        if (configStatus != Status::Ok) {\n            return configStatus;\n        }\n        config.internal_loopback = loopback;\n        const auto timingStatus = configureBitrate(config, nominalBitrate, 0U);\n        if (timingStatus != Status::Ok) {\n            return timingStatus;\n        }\n        return init(config);\n    }",
+          "Status initFd(bool bitrateSwitch = true, bool loopback = false) const\n    {\n        bsp_fdcan_config_t config{};\n        const auto configStatus = defaultConfig(config, true);\n        if (configStatus != Status::Ok) {\n            return configStatus;\n        }\n        config.bitrate_switch = bitrateSwitch;\n        config.internal_loopback = loopback;\n        return init(config);\n    }",
+          "Status initFdBitrate(std::uint32_t nominalBitrate, std::uint32_t dataBitrate, bool bitrateSwitch = true, bool loopback = false) const\n    {\n        bsp_fdcan_config_t config{};\n        const auto configStatus = defaultConfig(config, true);\n        if (configStatus != Status::Ok) {\n            return configStatus;\n        }\n        config.bitrate_switch = bitrateSwitch;\n        config.internal_loopback = loopback;\n        const auto timingStatus = configureBitrate(config, nominalBitrate, bitrateSwitch ? dataBitrate : nominalBitrate);\n        if (timingStatus != Status::Ok) {\n            return timingStatus;\n        }\n        return init(config);\n    }",
+          "Status write(const CanFrame &frame) const\n    {\n        const auto internal = toInternal(frame);\n        return statusFromInternal(bsp_fdcan_transmit(toInternal(id_), &internal));\n    }",
+          "Status read(CanFrame &frame) const\n    {\n        bsp_fdcan_frame_t internal{};\n        const auto status = statusFromInternal(bsp_fdcan_receive(toInternal(id_), &internal));\n        if (status == Status::Ok) {\n            frame = fromInternal(internal);\n        }\n        return status;\n    }",
+          "Status loopback(const CanFrame &tx, CanFrame &rx) const\n    {\n        const auto internalTx = toInternal(tx);\n        bsp_fdcan_frame_t internalRx{};\n        const auto status = statusFromInternal(bsp_fdcan_loopback(toInternal(id_), &internalTx, &internalRx));\n        if (status == Status::Ok) {\n            rx = fromInternal(internalRx);\n        }\n        return status;\n    }",
+          "Status filterMask(std::uint32_t id, std::uint32_t mask, bool extendedId = false, std::uint8_t filterIndex = 0) const\n    {\n        const bsp_fdcan_filter_t filter{.id = id, .mask = mask, .extended_id = extendedId, .filter_index = filterIndex};\n        return statusFromInternal(bsp_fdcan_config_filter_mask(toInternal(id_), &filter));\n    }",
+          "Status protocolStatus(bsp_fdcan_protocol_status_t &status) const { return statusFromInternal(bsp_fdcan_get_protocol_status(toInternal(id_), &status)); }",
+          "Status errorCount(bsp_fdcan_error_count_t &count) const { return statusFromInternal(bsp_fdcan_get_error_count(toInternal(id_), &count)); }",
+          "Status onReceive(bsp_fdcan_rx_callback_t callback, void *arg) const { return statusFromInternal(bsp_fdcan_register_rx_callback(toInternal(id_), callback, arg)); }",
+          "Status onTransmit(bsp_fdcan_tx_callback_t callback, void *arg) const { return statusFromInternal(bsp_fdcan_register_tx_callback(toInternal(id_), callback, arg)); }",
+          "static constexpr std::uint8_t payloadSize(std::uint8_t dlc) { return dlc; }"
+        ]
+      },
+      "instances": {
+        "Fdcan1": "BSP_FDCAN_MAIN",
+        "Fdcan2": "BSP_FDCAN_AUX"
+      }
+    },
+    "comp": {
+      "instances": {
+        "Comp1": "BSP_COMP1",
+        "Comp2": "BSP_COMP2"
+      }
+    },
+    "cordic": {
+      "instances": {
+        "Main": "BSP_CORDIC_MAIN"
+      }
+    },
+    "crc": {
+      "instances": {
+        "Main": "BSP_CRC_MAIN"
+      }
+    },
+    "dac": {
+      "instances": {
+        "Main": "BSP_DAC_MAIN"
+      }
+    },
+    "dcmi": {
+      "instances": {
+        "Main": "BSP_DCMI"
+      }
+    },
+    "dfsdm": {
+      "instances": {
+        "Dfsdm1": "BSP_DFSDM1"
+      }
+    },
+    "dma": {
+      "instances": {
+        "Main": "BSP_DMAV2_MAIN"
+      }
+    },
+    "dma2d": {
+      "instances": {
+        "Main": "BSP_DMA2D_MAIN"
+      }
+    },
+    "encoder": {
+      "instances": {
+        "Main": "BSP_QEIV2_MAIN"
+      }
+    },
+    "eth": {
+      "instances": {
+        "Port0": "BSP_ENET_PORT0"
+      }
+    },
+    "fmac": {
+      "instances": {
+        "Main": "BSP_FMAC_MAIN"
+      }
+    },
+    "gpio": {
+      "instances": {
+        "AccelCs": "BSP_GPIO_ACCEL_CS",
+        "AccelInt": "BSP_GPIO_ACCEL_INT",
+        "GyroCs": "BSP_GPIO_GYRO_CS",
+        "GyroInt": "BSP_GPIO_GYRO_INT"
+      }
+    },
+    "hcd": {
+      "instances": {
+        "Hs": "BSP_HCD_HS"
+      }
+    },
+    "i2c": {
+      "instances": {
+        "Main": "BSP_I2C_MAIN"
+      }
+    },
+    "i2s": {
+      "instances": {
+        "Main": "BSP_I2S_MAIN"
+      }
+    },
+    "jpeg": {
+      "instances": {
+        "Main": "BSP_JPEG_MAIN"
+      }
+    },
+    "ltdc": {
+      "instances": {
+        "Main": "BSP_LTDC"
+      }
+    },
+    "mdma": {
+      "instances": {
+        "Main": "BSP_MDMA_MAIN"
+      }
+    },
+    "mmc": {
+      "instances": {
+        "Mmc1": "BSP_MMC1",
+        "Mmc2": "BSP_MMC2"
+      }
+    },
+    "opamp": {
+      "instances": {
+        "Opamp1": "BSP_OPAMP1",
+        "Opamp2": "BSP_OPAMP2"
+      }
+    },
+    "ospi": {
+      "instances": {
+        "Ospi1": "BSP_OSPI1",
+        "Ospi2": "BSP_OSPI2"
+      }
+    },
+    "pcd": {
+      "instances": {
+        "Hs": "BSP_PCD_HS"
+      }
+    },
+    "pssi": {
+      "instances": {
+        "Main": "BSP_PSSI"
+      }
+    },
+    "pwm": {
+      "instances": {
+        "Buzzer": "BSP_PWM_BUZZER",
+        "Main": "BSP_PWM_MAIN"
+      }
+    },
+    "qspi": {
+      "instances": {
+        "Qspi1": "BSP_QSPI1"
+      }
+    },
+    "rng": {
+      "instances": {
+        "Main": "BSP_RNG_MAIN"
+      }
+    },
+    "rtc": {
+      "instances": {
+        "Main": "BSP_RTC_MAIN"
+      }
+    },
+    "sai": {
+      "instances": {
+        "Sai1": "BSP_SAI1",
+        "Sai4": "BSP_SAI4"
+      }
+    },
+    "sd": {
+      "instances": {
+        "Sdmmc1": "BSP_SDMMC1",
+        "Sdmmc2": "BSP_SDMMC2"
+      }
+    },
+    "sdio": {
+      "instances": {
+        "Sdio1": "BSP_SDIO1",
+        "Sdio2": "BSP_SDIO2"
+      }
+    },
+    "smartcard": {
+      "instances": {
+        "Usart1": "BSP_SMARTCARD_USART1",
+        "Usart10": "BSP_SMARTCARD_USART10",
+        "Usart2": "BSP_SMARTCARD_USART2",
+        "Usart3": "BSP_SMARTCARD_USART3",
+        "Usart6": "BSP_SMARTCARD_USART6"
+      }
+    },
+    "smbus": {
+      "instances": {
+        "I2c1": "BSP_SMBUS_I2C1",
+        "I2c2": "BSP_SMBUS_I2C2",
+        "I2c3": "BSP_SMBUS_I2C3",
+        "I2c4": "BSP_SMBUS_I2C4",
+        "I2c5": "BSP_SMBUS_I2C5"
+      }
+    },
+    "spi": {
+      "instances": {
+        "Spi2": "BSP_SPI_MAIN",
+        "Spi6": "BSP_SPI_AUX"
+      }
+    },
+    "timer": {
+      "generated": {
+        "extra_helpers": [
+          "    static constexpr bsp_tim_mode_t toInternal(TimerMode mode)\n    {\n        switch (mode) {\n        case TimerMode::Periodic:\n            return BSP_TIM_MODE_PERIODIC;\n        case TimerMode::Oneshot:\n            return BSP_TIM_MODE_ONESHOT;\n        case TimerMode::CaptureRising:\n            return BSP_TIM_MODE_CAPTURE_RISING;\n        case TimerMode::Compare:\n            return BSP_TIM_MODE_COMPARE;\n        }\n        return BSP_TIM_MODE_PERIODIC;\n    }"
+        ],
+        "header_include": "bsp/interface/bsp_tim.h",
+        "include": "tim.hpp",
+        "internal_id_type": "bsp_tim_instance_t",
+        "methods": [
+          "Status init(TimerMode mode, std::uint32_t ticks) const { return statusFromInternal(bsp_tim_init(toInternal(id_), toInternal(mode), ticks)); }",
+          "Status start() const { return statusFromInternal(bsp_tim_start(toInternal(id_))); }",
+          "Status stop() const { return statusFromInternal(bsp_tim_stop(toInternal(id_))); }",
+          "Status read(std::uint32_t &value) const { return statusFromInternal(bsp_tim_get_counter(toInternal(id_), &value)); }",
+          "Status capture(std::uint32_t &value) const { return statusFromInternal(bsp_tim_get_capture(toInternal(id_), &value)); }",
+          "Status compare(std::uint32_t ticks) const { return statusFromInternal(bsp_tim_set_compare(toInternal(id_), ticks)); }",
+          "Status triggerOutput(bsp_tim_trigger_output_t output = BSP_TIM_TRIGGER_OUTPUT_UPDATE) const { return statusFromInternal(bsp_tim_config_trigger_output(toInternal(id_), output)); }",
+          "Status triggerOutputUpdate() const { return triggerOutput(BSP_TIM_TRIGGER_OUTPUT_UPDATE); }",
+          "Status onEvent(TimerEventCallback callback, void *arg) const { return statusFromInternal(bsp_tim_register_event_callback(toInternal(id_), callback, arg)); }"
+        ]
+      },
+      "instances": {
+        "AdcTrigger": "BSP_TIM_ADC_TRIGGER",
+        "Tim12": "BSP_TIM_MAIN"
+      }
+    },
+    "uart": {
+      "instances": {
+        "Usart1": "BSP_UART_DEBUG"
+      }
+    },
+    "usart": {
+      "instances": {
+        "Usart1": "BSP_USART1",
+        "Usart10": "BSP_USART10",
+        "Usart2": "BSP_USART2",
+        "Usart3": "BSP_USART3",
+        "Usart6": "BSP_USART6"
+      }
+    },
+    "watchdog": {
+      "instances": {
+        "Main": "BSP_EWDG_MAIN"
+      }
+    },
+    "wwdg": {
+      "instances": {
+        "Main": "BSP_WWDG_MAIN"
+      }
+    }
+  }
+}

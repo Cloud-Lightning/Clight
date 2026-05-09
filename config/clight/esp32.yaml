@@ -1,0 +1,137 @@
+{
+  "board": "esp32s3_devkitc",
+  "modules": {
+    "gpio": {
+      "instances": {
+        "Gpio2": "BSP_GPIO_LED",
+        "Gpio0": "BSP_GPIO_KEY"
+      }
+    },
+    "timer": {
+      "instances": {
+        "Gptimer0": "BSP_GPTMR_TIMER"
+      }
+    },
+    "pwm": {
+      "instances": {
+        "Ledc0": "BSP_PWM_MAIN"
+      }
+    },
+    "adc": {
+      "instances": {
+        "Adc1Ch0": "BSP_ADC16_MAIN"
+      }
+    },
+    "uart": {
+      "instances": {
+        "Uart0": "BSP_UART_DEBUG",
+        "Uart1": "BSP_UART_APP"
+      }
+    },
+    "spi": {
+      "instances": {
+        "Spi2": "BSP_SPI_MAIN"
+      }
+    },
+    "i2c": {
+      "instances": {
+        "I2c0": "BSP_I2C_MAIN"
+      }
+    },
+    "tsens": {
+      "instances": {
+        "Tsens": "BSP_TSENS_MAIN"
+      }
+    },
+    "usb_serial_jtag": {
+      "instances": {
+        "UsbSerialJtag": "BSP_USB_SERIAL_JTAG_MAIN"
+      }
+    },
+    "pcnt": {
+      "instances": {
+        "Pcnt0": "BSP_PCNT_MAIN"
+      }
+    },
+    "rmt": {
+      "instances": {
+        "Rmt0": "BSP_RMT_MAIN"
+      }
+    },
+    "mcpwm": {
+      "instances": {
+        "Mcpwm0": "BSP_MCPWM_MAIN"
+      }
+    },
+    "sdspi": {
+      "instances": {
+        "Sdspi2": "BSP_SDSPI_MAIN"
+      }
+    },
+    "lcd": {
+      "instances": {
+        "Lcd0": "BSP_LCD_MAIN"
+      }
+    },
+    "wifi": {
+      "instances": {
+        "WifiSta": "BSP_WIFI_MAIN"
+      }
+    },
+    "touch": {
+      "instances": {
+        "Touch0": "BSP_TOUCH_MAIN"
+      }
+    },
+    "i2s": {
+      "instances": {
+        "I2s0": "BSP_I2S_MAIN"
+      }
+    },
+    "dac": {
+      "instances": {
+        "Dac0": "BSP_DAC_MAIN"
+      }
+    },
+    "ana_cmpr": {
+      "instances": {
+        "AnaCmpr0": "BSP_ACMP0"
+      }
+    },
+    "cam": {
+      "instances": {
+        "Cam0": "BSP_CAM0"
+      }
+    },
+    "jpeg": {
+      "instances": {
+        "Jpeg0": "BSP_JPEG0"
+      }
+    },
+    "parlio": {
+      "instances": {
+        "Parlio0": "BSP_PARLIO0"
+      }
+    },
+    "ppa": {
+      "instances": {
+        "Ppa0": "BSP_PPA0"
+      }
+    },
+    "sdio": {
+      "instances": {
+        "Sdio0": "BSP_SDIO0"
+      }
+    },
+    "sdmmc": {
+      "instances": {
+        "Sdmmc0": "BSP_SDMMC0"
+      }
+    },
+    "sdm": {
+      "instances": {
+        "Sdm0": "BSP_SDM0"
+      }
+    }
+  }
+}

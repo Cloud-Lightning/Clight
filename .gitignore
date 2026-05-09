@@ -1,0 +1,65 @@
+# Build outputs
+build/
+build*/
+out/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+*.ninja
+.ninja_*
+
+# Vendor SDKs and generated board libraries
+vendor/
+Core/
+Drivers/
+Middlewares/
+STM32CubeMX/
+*.hpmpc
+sdkconfig
+sdkconfig.old
+
+# Binary artifacts
+*.bin
+*.elf
+*.hex
+*.map
+*.a
+*.o
+*.obj
+*.lib
+*.dll
+*.exe
+*.pdb
+*.ilk
+
+# Secrets and local credentials
+.env
+.env.*
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+secrets.*
+credentials.*
+id_rsa*
+id_ed25519*
+
+# Local/editor files
+.vscode/
+.idea/
+*.user
+*.log
+*.tmp
+*.bak
+Thumbs.db
+.DS_Store
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Local reference documents not part of framework source
+docs/reference/*.pdf

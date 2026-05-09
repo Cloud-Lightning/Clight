@@ -1,0 +1,11 @@
+board:
+  name: hpm5e31_lqfp
+  soc: HPM5E31
+  device: HPM5E31xPBx
+  openocd-soc: hpm5e00
+  openocd-probe: cmsis_dap
+  on-board-flash:
+    type: qspi-nor-flash
+    size: 1M
+  feature:
+    - board_enet_phy

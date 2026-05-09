@@ -1,0 +1,137 @@
+{
+  "board": "esp32s3_devkitc",
+  "modules": {
+    "adc": {
+      "instances": {
+        "Adc1Ch0": "BSP_ADC16_MAIN"
+      }
+    },
+    "ana_cmpr": {
+      "instances": {
+        "AnaCmpr0": "BSP_ACMP0"
+      }
+    },
+    "cam": {
+      "instances": {
+        "Cam0": "BSP_CAM0"
+      }
+    },
+    "dac": {
+      "instances": {
+        "Dac0": "BSP_DAC_MAIN"
+      }
+    },
+    "gpio": {
+      "instances": {
+        "Gpio0": "BSP_GPIO_KEY",
+        "Gpio2": "BSP_GPIO_LED"
+      }
+    },
+    "i2c": {
+      "instances": {
+        "I2c0": "BSP_I2C_MAIN"
+      }
+    },
+    "i2s": {
+      "instances": {
+        "I2s0": "BSP_I2S_MAIN"
+      }
+    },
+    "jpeg": {
+      "instances": {
+        "Jpeg0": "BSP_JPEG0"
+      }
+    },
+    "lcd": {
+      "instances": {
+        "Lcd0": "BSP_LCD_MAIN"
+      }
+    },
+    "mcpwm": {
+      "instances": {
+        "Mcpwm0": "BSP_MCPWM_MAIN"
+      }
+    },
+    "parlio": {
+      "instances": {
+        "Parlio0": "BSP_PARLIO0"
+      }
+    },
+    "pcnt": {
+      "instances": {
+        "Pcnt0": "BSP_PCNT_MAIN"
+      }
+    },
+    "ppa": {
+      "instances": {
+        "Ppa0": "BSP_PPA0"
+      }
+    },
+    "pwm": {
+      "instances": {
+        "Ledc0": "BSP_PWM_MAIN"
+      }
+    },
+    "rmt": {
+      "instances": {
+        "Rmt0": "BSP_RMT_MAIN"
+      }
+    },
+    "sdio": {
+      "instances": {
+        "Sdio0": "BSP_SDIO0"
+      }
+    },
+    "sdm": {
+      "instances": {
+        "Sdm0": "BSP_SDM0"
+      }
+    },
+    "sdmmc": {
+      "instances": {
+        "Sdmmc0": "BSP_SDMMC0"
+      }
+    },
+    "sdspi": {
+      "instances": {
+        "Sdspi2": "BSP_SDSPI_MAIN"
+      }
+    },
+    "spi": {
+      "instances": {
+        "Spi2": "BSP_SPI_MAIN"
+      }
+    },
+    "timer": {
+      "instances": {
+        "Gptimer0": "BSP_GPTMR_TIMER"
+      }
+    },
+    "touch": {
+      "instances": {
+        "Touch0": "BSP_TOUCH_MAIN"
+      }
+    },
+    "tsens": {
+      "instances": {
+        "Tsens": "BSP_TSENS_MAIN"
+      }
+    },
+    "uart": {
+      "instances": {
+        "Uart0": "BSP_UART_DEBUG",
+        "Uart1": "BSP_UART_APP"
+      }
+    },
+    "usb_serial_jtag": {
+      "instances": {
+        "UsbSerialJtag": "BSP_USB_SERIAL_JTAG_MAIN"
+      }
+    },
+    "wifi": {
+      "instances": {
+        "WifiSta": "BSP_WIFI_MAIN"
+      }
+    }
+  }
+}

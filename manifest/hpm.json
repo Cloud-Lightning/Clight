@@ -1,0 +1,323 @@
+{
+  "board": "hpm",
+  "modules": {
+    "adc": {
+      "instances": {
+        "Main": "BSP_ADC16_MAIN"
+      }
+    },
+    "ana_cmpr": {
+      "instances": {
+        "Main": "BSP_ACMP_MAIN"
+      }
+    },
+    "cache": {
+      "instances": {
+        "Main": "BSP_L1C_MAIN"
+      }
+    },
+    "can": {
+      "generated": {
+        "append_methods": [
+          "Status clock(std::uint32_t &frequencyHz) const { return statusFromInternal(bsp_mcan_get_clock(toInternal(id_), &frequencyHz)); }",
+          "Status configureBitrate(bsp_mcan_config_t &config, std::uint32_t nominalBitrate, std::uint32_t dataBitrate = 0U) const { return statusFromInternal(bsp_mcan_config_bitrate(toInternal(id_), &config, nominalBitrate, dataBitrate)); }",
+          "Status initBitrate(std::uint32_t nominalBitrate, bool loopback = false, std::uint8_t irqPriority = DefaultIrqPriority) const\n    {\n        bsp_mcan_config_t config{};\n        const auto configStatus = defaultConfig(config, false);\n        if (configStatus != Status::Ok) {\n            return configStatus;\n        }\n        config.mode = loopback ? mcan_mode_loopback_internal : mcan_mode_normal;\n        const auto bitrateStatus = configureBitrate(config, nominalBitrate, 0U);\n        if (bitrateStatus != Status::Ok) {\n            return bitrateStatus;\n        }\n        return init(config, irqPriority);\n    }",
+          "Status initFd(bool bitrateSwitch = true, bool loopback = false, std::uint8_t irqPriority = DefaultIrqPriority) const\n    {\n        (void) bitrateSwitch;\n        bsp_mcan_config_t config{};\n        const auto configStatus = defaultConfig(config, true);\n        if (configStatus != Status::Ok) {\n            return configStatus;\n        }\n        config.mode = loopback ? mcan_mode_loopback_internal : mcan_mode_normal;\n        return init(config, irqPriority);\n    }",
+          "Status initFdBitrate(std::uint32_t nominalBitrate, std::uint32_t dataBitrate, bool bitrateSwitch = true, bool loopback = false, std::uint8_t irqPriority = DefaultIrqPriority) const\n    {\n        (void) bitrateSwitch;\n        bsp_mcan_config_t config{};\n        const auto configStatus = defaultConfig(config, true);\n        if (configStatus != Status::Ok) {\n            return configStatus;\n        }\n        config.mode = loopback ? mcan_mode_loopback_internal : mcan_mode_normal;\n        const auto bitrateStatus = configureBitrate(config, nominalBitrate, dataBitrate);\n        if (bitrateStatus != Status::Ok) {\n            return bitrateStatus;\n        }\n        return init(config, irqPriority);\n    }"
+        ]
+      },
+      "instances": {
+        "Main": "BSP_MCAN_MAIN"
+      }
+    },
+    "crc": {
+      "instances": {
+        "Main": "BSP_CRC_MAIN"
+      }
+    },
+    "dac": {
+      "instances": {
+        "None": "BSP_DAC_NONE"
+      }
+    },
+    "dma": {
+      "instances": {
+        "Main": "BSP_DMAV2_MAIN"
+      }
+    },
+    "ecat": {
+      "generated": {
+        "methods": [
+          "Status init() const { return statusFromInternal(bsp_ecat_init(toInternal(id_))); }",
+          "std::uintptr_t baseAddress() const { return bsp_ecat_get_base_address(toInternal(id_)); }",
+          "Status initSwitchLed() const { return statusFromInternal(bsp_ecat_init_switch_led(toInternal(id_))); }",
+          "Status initEepromPins() const { return statusFromInternal(bsp_ecat_init_eeprom_pins(toInternal(id_))); }",
+          "Status initEepromI2cPins() const { return statusFromInternal(bsp_ecat_init_eeprom_as_i2c_pins(toInternal(id_))); }",
+          "Status selectMdioOwner(MdioOwner owner) const { return statusFromInternal(bsp_ecat_set_mdio_owner(mdioOwnerToInternal(owner))); }",
+          "Status coreClock(bool enable) const { return statusFromInternal(bsp_ecat_set_core_clock(toInternal(id_), enable)); }",
+          "Status phyClock(bool enable) const { return statusFromInternal(bsp_ecat_set_phy_clock(toInternal(id_), enable)); }",
+          "Status eepromClockConfig(const bsp_ecat_eeprom_clock_config_t &config) const { return statusFromInternal(bsp_ecat_config_eeprom_clock(toInternal(id_), &config)); }",
+          "Status ctrlSignal(std::uint8_t index, bsp_ecat_ctrl_signal_function_t function, bool invert = false) const { return statusFromInternal(bsp_ecat_config_ctrl_signal(toInternal(id_), index, function, invert)); }",
+          "Status nmiiLinkSource(bool link0FromIo, bool link1FromIo, bool link2FromIo) const { return statusFromInternal(bsp_ecat_config_nmii_link_source(toInternal(id_), link0FromIo, link1FromIo, link2FromIo)); }",
+          "Status resetSource(bool resetFromEcatCore) const { return statusFromInternal(bsp_ecat_config_reset_source(toInternal(id_), resetFromEcatCore)); }",
+          "Status pdiReset() const { return statusFromInternal(bsp_ecat_pdi_reset(toInternal(id_))); }",
+          "Status phyOffset(std::uint8_t offset) const { return statusFromInternal(bsp_ecat_set_phy_offset(toInternal(id_), offset)); }",
+          "Status mdioRead(std::uint8_t phyAddr, std::uint8_t regAddr, std::uint16_t &data) const { return statusFromInternal(bsp_ecat_mdio_read(toInternal(id_), phyAddr, regAddr, &data)); }",
+          "Status mdioWrite(std::uint8_t phyAddr, std::uint8_t regAddr, std::uint16_t data) const { return statusFromInternal(bsp_ecat_mdio_write(toInternal(id_), phyAddr, regAddr, data)); }",
+          "Status eepromLoading() const { return statusFromInternal(bsp_ecat_check_eeprom_loading(toInternal(id_))); }",
+          "Status enableIrq(bsp_ecat_irq_mask_t mask) const { return statusFromInternal(bsp_ecat_enable_irq(toInternal(id_), mask)); }",
+          "Status disableIrq(bsp_ecat_irq_mask_t mask) const { return statusFromInternal(bsp_ecat_disable_irq(toInternal(id_), mask)); }",
+          "Status eepromCommand(bsp_ecat_eeprom_command_t &cmd) const { return statusFromInternal(bsp_ecat_get_eeprom_command(toInternal(id_), &cmd)); }",
+          "Status eepromByteAddress(std::uint32_t &address) const { return statusFromInternal(bsp_ecat_get_eeprom_byte_address(toInternal(id_), &address)); }",
+          "Status eepromWordAddress(std::uint32_t &address) const { return statusFromInternal(bsp_ecat_get_eeprom_word_address(toInternal(id_), &address)); }",
+          "Status eepromData(std::uint64_t &data) const { return statusFromInternal(bsp_ecat_read_eeprom_data(toInternal(id_), &data)); }",
+          "Status writeEepromData(std::uint64_t data) const { return statusFromInternal(bsp_ecat_write_eeprom_data(toInternal(id_), data)); }",
+          "Status ackEepromEmulation(bsp_ecat_eeprom_command_t cmd, bool ackError = false, bool crcError = false) const { return statusFromInternal(bsp_ecat_ack_eeprom_emulation(toInternal(id_), cmd, ackError, crcError)); }"
+        ]
+      },
+      "instances": {
+        "Port0": "BSP_ECAT_PORT0"
+      }
+    },
+    "encoder": {
+      "instances": {
+        "Main": "BSP_QEIV2_MAIN"
+      }
+    },
+    "encoder_output": {
+      "instances": {
+        "Main": "BSP_QEOV2_MAIN"
+      }
+    },
+    "eth": {
+      "generated": {
+        "methods": [
+          "Status init() const { return statusFromInternal(bsp_enet_init(toInternal(id_))); }",
+          "std::uintptr_t baseAddress() const { return bsp_enet_get_base_address(toInternal(id_)); }",
+          "Status initPins() const { return statusFromInternal(bsp_enet_init_pins(toInternal(id_))); }",
+          "Status resetPhy() const { return statusFromInternal(bsp_enet_reset_phy(toInternal(id_))); }",
+          "Status initRgmiiClockDelay() const { return statusFromInternal(bsp_enet_init_rgmii_clock_delay(toInternal(id_))); }",
+          "Status initRmiiReferenceClock(bool internal) const { return statusFromInternal(bsp_enet_init_rmii_reference_clock(toInternal(id_), internal)); }",
+          "Status initMiiClock() const { return statusFromInternal(bsp_enet_init_mii_clock(toInternal(id_))); }",
+          "Status initPtpClock() const { return statusFromInternal(bsp_enet_init_ptp_clock(toInternal(id_))); }",
+          "Status enableIrq() const { return statusFromInternal(bsp_enet_enable_irq(toInternal(id_))); }",
+          "Status disableIrq() const { return statusFromInternal(bsp_enet_disable_irq(toInternal(id_))); }",
+          "Status dmaPbl(std::uint8_t &pbl) const { return statusFromInternal(bsp_enet_get_dma_pbl(toInternal(id_), &pbl)); }",
+          "Status readPhy(std::uint32_t phyAddr, std::uint32_t regAddr, std::uint16_t &value) const { return statusFromInternal(bsp_enet_read_phy(toInternal(id_), phyAddr, regAddr, &value)); }",
+          "Status writePhy(std::uint32_t phyAddr, std::uint32_t regAddr, std::uint16_t value) const { return statusFromInternal(bsp_enet_write_phy(toInternal(id_), phyAddr, regAddr, value)); }",
+          "Status selectMdioOwner(MdioOwner owner) const { return statusFromInternal(bsp_enet_set_mdio_owner(mdioOwnerToInternal(owner))); }",
+          "Status linkState(EthLinkState &state) const\n    {\n        bsp_enet_link_state_t internal{};\n        const auto status = statusFromInternal(bsp_enet_get_link_state(toInternal(id_), &internal));\n        if (status == Status::Ok) {\n            state.linkUp = (internal.link_up == BSP_ENABLE);\n            switch (internal.speed) {\n            case BSP_ENET_SPEED_10M:\n                state.speed = EthSpeed::Speed10M;\n                break;\n            case BSP_ENET_SPEED_100M:\n                state.speed = EthSpeed::Speed100M;\n                break;\n            case BSP_ENET_SPEED_1000M:\n                state.speed = EthSpeed::Speed1000M;\n                break;\n            default:\n                state.speed = EthSpeed::Unknown;\n                break;\n            }\n            switch (internal.duplex) {\n            case BSP_ENET_DUPLEX_HALF:\n                state.duplex = EthDuplex::Half;\n                break;\n            case BSP_ENET_DUPLEX_FULL:\n                state.duplex = EthDuplex::Full;\n                break;\n            default:\n                state.duplex = EthDuplex::Unknown;\n                break;\n            }\n        }\n        return status;\n    }",
+          "Status defaultTxControl(bsp_enet_tx_control_config_t &config) const { return statusFromInternal(bsp_enet_get_default_tx_control(toInternal(id_), &config)); }",
+          "Status defaultInterruptConfig(bsp_enet_interrupt_config_t &config) const { return statusFromInternal(bsp_enet_get_default_interrupt_config(toInternal(id_), &config)); }",
+          "Status controllerInit(bsp_enet_interface_t infType, bsp_enet_desc_t &desc, bsp_enet_mac_config_t &macConfig, bsp_enet_interrupt_config_t *interruptConfig = nullptr) const { return statusFromInternal(bsp_enet_controller_init(toInternal(id_), infType, &desc, &macConfig, interruptConfig)); }",
+          "Status lineSpeed(bsp_enet_speed_t speed) const { return statusFromInternal(bsp_enet_set_line_speed(toInternal(id_), speed)); }",
+          "Status duplexMode(bsp_enet_duplex_t mode) const { return statusFromInternal(bsp_enet_set_duplex_mode(toInternal(id_), mode)); }",
+          "Status rxResume() const { return statusFromInternal(bsp_enet_rx_resume(toInternal(id_))); }",
+          "Status txDescChainInit(bsp_enet_desc_t &desc) const { return statusFromInternal(bsp_enet_tx_desc_chain_init(toInternal(id_), &desc)); }",
+          "Status rxDescChainInit(bsp_enet_desc_t &desc) const { return statusFromInternal(bsp_enet_rx_desc_chain_init(toInternal(id_), &desc)); }",
+          "Status dmaFlush() const { return statusFromInternal(bsp_enet_dma_flush(toInternal(id_))); }",
+          "Status interruptStatus(std::uint32_t &status) const { return statusFromInternal(bsp_enet_get_interrupt_status(toInternal(id_), &status)); }",
+          "Status maskInterruptEvent(std::uint32_t mask) const { return statusFromInternal(bsp_enet_mask_interrupt_event(toInternal(id_), mask)); }",
+          "Status unmaskInterruptEvent(std::uint32_t mask) const { return statusFromInternal(bsp_enet_unmask_interrupt_event(toInternal(id_), mask)); }",
+          "Status hasReceivedFrame(bsp_enet_rx_desc_t *&current, bsp_enet_rx_frame_info_t &info, bool &available) const\n    {\n        bsp_state_t internal = BSP_DISABLE;\n        const auto status = statusFromInternal(bsp_enet_check_received_frame(&current, &info, &internal));\n        if (status == Status::Ok) {\n            available = (internal == BSP_ENABLE);\n        }\n        return status;\n    }",
+          "Status receivedFrame(bsp_enet_rx_desc_t *&current, bsp_enet_rx_frame_info_t &info, bsp_enet_frame_t &frame) const { return statusFromInternal(bsp_enet_get_received_frame(&current, &info, &frame)); }",
+          "Status receivedFrameInterrupt(bsp_enet_rx_desc_t *&current, bsp_enet_rx_frame_info_t &info, std::uint32_t rxDescCount, bsp_enet_frame_t &frame) const { return statusFromInternal(bsp_enet_get_received_frame_interrupt(&current, &info, rxDescCount, &frame)); }",
+          "Status prepareTxDesc(bsp_enet_tx_desc_t *&current, const bsp_enet_tx_control_config_t &config, std::uint16_t frameLength, std::uint16_t txBufferSize, bool &prepared) const\n    {\n        bsp_state_t internal = BSP_DISABLE;\n        const auto status = statusFromInternal(bsp_enet_prepare_tx_desc(toInternal(id_), &current, &config, frameLength, txBufferSize, &internal));\n        if (status == Status::Ok) {\n            prepared = (internal == BSP_ENABLE);\n        }\n        return status;\n    }",
+          "Status prepareTxDescWithTimestamp(bsp_enet_tx_desc_t *&current, const bsp_enet_tx_control_config_t &config, std::uint16_t frameLength, std::uint16_t txBufferSize, bsp_enet_ptp_timestamp_t &timestamp, bool &prepared) const\n    {\n        bsp_state_t internal = BSP_DISABLE;\n        const auto status = statusFromInternal(bsp_enet_prepare_tx_desc_with_timestamp(toInternal(id_), &current, &config, frameLength, txBufferSize, &timestamp, &internal));\n        if (status == Status::Ok) {\n            prepared = (internal == BSP_ENABLE);\n        }\n        return status;\n    }",
+          "Status defaultPtpConfig(std::uint32_t ptpClockHz, bsp_enet_ptp_config_t &config) const { return statusFromInternal(bsp_enet_get_default_ptp_config(toInternal(id_), ptpClockHz, &config)); }",
+          "Status initPtp(const bsp_enet_ptp_config_t &config) const { return statusFromInternal(bsp_enet_init_ptp(toInternal(id_), &config)); }",
+          "Status setPtpTimestamp(const bsp_enet_ptp_timestamp_update_t &timestamp) const { return statusFromInternal(bsp_enet_set_ptp_timestamp(toInternal(id_), &timestamp)); }",
+          "Status ptpTimestamp(bsp_enet_ptp_timestamp_t &timestamp) const { return statusFromInternal(bsp_enet_get_ptp_timestamp(toInternal(id_), &timestamp)); }",
+          "Status updatePtpTimeoffset(const bsp_enet_ptp_timestamp_update_t &timeoffset) const { return statusFromInternal(bsp_enet_update_ptp_timeoffset(toInternal(id_), &timeoffset)); }",
+          "Status adjustPtpTimeFreq(std::int32_t adjustment) const { return statusFromInternal(bsp_enet_adjust_ptp_time_freq(toInternal(id_), adjustment)); }",
+          "Status ptpVersion(bsp_enet_ptp_version_t version) const { return statusFromInternal(bsp_enet_set_ptp_version(toInternal(id_), version)); }",
+          "Status enablePtpFrameType(bsp_enet_ptp_frame_type_t frameType, bool enable) const { return statusFromInternal(bsp_enet_enable_ptp_frame_type(toInternal(id_), frameType, enable)); }",
+          "Status snapshotPtpMessageType(bsp_enet_ptp_message_type_t messageType) const { return statusFromInternal(bsp_enet_set_snapshot_ptp_message_type(toInternal(id_), messageType)); }",
+          "Status pps0ControlOutput(bsp_enet_pps_control_t control) const { return statusFromInternal(bsp_enet_set_pps_control_output(toInternal(id_), control)); }",
+          "Status ppsCommand(bsp_enet_pps_command_t cmd, bsp_enet_pps_index_t index = BSP_ENET_PPS_INDEX0) const { return statusFromInternal(bsp_enet_set_pps_command(toInternal(id_), cmd, index)); }",
+          "Status ppsConfig(const bsp_enet_pps_config_t &config, bsp_enet_pps_index_t index = BSP_ENET_PPS_INDEX0) const { return statusFromInternal(bsp_enet_set_pps_config(toInternal(id_), &config, index)); }",
+          "Status enableAuxSnapshot(bsp_enet_aux_snapshot_trigger_t index) const { return statusFromInternal(bsp_enet_enable_aux_snapshot(toInternal(id_), index)); }",
+          "Status disableAuxSnapshot(bsp_enet_aux_snapshot_trigger_t index) const { return statusFromInternal(bsp_enet_disable_aux_snapshot(toInternal(id_), index)); }",
+          "Status auxTimestamp(bsp_enet_ptp_aux_timestamp_t &timestamp) const { return statusFromInternal(bsp_enet_get_aux_timestamp(toInternal(id_), &timestamp)); }",
+          "Status auxSnapshotStatus(bsp_enet_ptp_aux_status_t &status) const { return statusFromInternal(bsp_enet_get_aux_snapshot_status(toInternal(id_), &status)); }"
+        ]
+      },
+      "instances": {
+        "Port0": "BSP_ENET_PORT0"
+      }
+    },
+    "eui": {
+      "instances": {
+        "Main": "BSP_EUI_MAIN"
+      }
+    },
+    "gpio": {
+      "instances": {
+        "Key": "BSP_GPIO_KEY",
+        "LcdBacklight": "BSP_GPIO_LCD_BL",
+        "LcdCs": "BSP_GPIO_LCD_CS",
+        "LcdDc": "BSP_GPIO_LCD_DC",
+        "LcdReset": "BSP_GPIO_LCD_RST",
+        "Led": "BSP_GPIO_LED",
+        "Led2": "BSP_GPIO_LED2",
+        "Led3": "BSP_GPIO_LED3",
+        "Led4": "BSP_GPIO_LED4"
+      }
+    },
+    "i2c": {
+      "instances": {
+        "Main": "BSP_I2C_MAIN"
+      }
+    },
+    "i2s": {
+      "instances": {
+        "None": "BSP_I2S_NONE"
+      }
+    },
+    "lobs": {
+      "instances": {
+        "Main": "BSP_LOBS_MAIN"
+      }
+    },
+    "mailbox": {
+      "instances": {
+        "Local": "BSP_MBX_LOCAL",
+        "Remote": "BSP_MBX_REMOTE"
+      }
+    },
+    "mchtmr": {
+      "instances": {
+        "Main": "BSP_MCHTMR_MAIN"
+      }
+    },
+    "mmc": {
+      "instances": {
+        "None": "BSP_MMC_NONE"
+      }
+    },
+    "ospi": {
+      "instances": {
+        "None": "BSP_OSPI_NONE"
+      }
+    },
+    "owr": {
+      "instances": {
+        "Main": "BSP_OWR_MAIN"
+      }
+    },
+    "pdgo": {
+      "instances": {
+        "Main": "BSP_PDGO_MAIN"
+      }
+    },
+    "plb": {
+      "instances": {
+        "Main": "BSP_PLB_MAIN"
+      }
+    },
+    "plic": {
+      "instances": {
+        "Main": "BSP_PLIC_MAIN"
+      }
+    },
+    "pll_ctl": {
+      "instances": {
+        "Main": "BSP_PLLCTLV2_MAIN"
+      }
+    },
+    "ppi": {
+      "instances": {
+        "Main": "BSP_PPI_MAIN"
+      }
+    },
+    "ppor": {
+      "instances": {
+        "Main": "BSP_PPOR_MAIN"
+      }
+    },
+    "ptpc": {
+      "instances": {
+        "Main": "BSP_PTPC_MAIN"
+      }
+    },
+    "pwm": {
+      "instances": {
+        "Main": "BSP_PWM_MAIN",
+        "Timer": "BSP_PWM_TIMER"
+      }
+    },
+    "qspi": {
+      "instances": {
+        "None": "BSP_QSPI_NONE"
+      }
+    },
+    "rng": {
+      "instances": {
+        "None": "BSP_RNG_NONE"
+      }
+    },
+    "rtc": {
+      "instances": {
+        "None": "BSP_RTC_NONE"
+      }
+    },
+    "sai": {
+      "instances": {
+        "None": "BSP_SAI_NONE"
+      }
+    },
+    "sd": {
+      "instances": {
+        "None": "BSP_SD_NONE"
+      }
+    },
+    "sdio": {
+      "instances": {
+        "None": "BSP_SDIO_NONE"
+      }
+    },
+    "sdm": {
+      "instances": {
+        "Main": "BSP_SDM_MAIN"
+      }
+    },
+    "spi": {
+      "instances": {
+        "Main": "BSP_SPI_MAIN"
+      }
+    },
+    "synt": {
+      "instances": {
+        "Main": "BSP_SYNT_MAIN"
+      }
+    },
+    "timer": {
+      "instances": {
+        "Capture": "BSP_GPTMR_CAPTURE",
+        "Compare": "BSP_GPTMR_COMPARE",
+        "Main": "BSP_GPTMR_TIMER"
+      }
+    },
+    "trgm": {
+      "instances": {
+        "Main": "BSP_TRGM_MAIN"
+      }
+    },
+    "tsns": {
+      "instances": {
+        "Main": "BSP_TSNS_MAIN"
+      }
+    },
+    "uart": {
+      "instances": {
+        "App": "BSP_UART_APP",
+        "Debug": "BSP_UART_DEBUG"
+      }
+    },
+    "watchdog": {
+      "instances": {
+        "Main": "BSP_EWDG_MAIN"
+      }
+    }
+  }
+}
