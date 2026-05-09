@@ -10,15 +10,30 @@ compile_commands.json
 *.ninja
 .ninja_*
 
-# Vendor SDKs and generated board libraries
-vendor/
-Core/
-Drivers/
-Middlewares/
-STM32CubeMX/
+# Generated board libraries and external SDK mirrors
+/Core/
+/Drivers/
+/Middlewares/
+/STM32CubeMX/
+platforms/stm32/board/*/Core/
+platforms/stm32/board/*/Drivers/
+platforms/stm32/board/*/Middlewares/
+platforms/stm32/board/*/STM32CubeMX/
 *.hpmpc
 sdkconfig
 sdkconfig.old
+
+# Vendored source trees are allowed when Clight maintains modified copies.
+# Keep local/generated artifacts out of vendor.
+vendor/**/build/
+vendor/**/build*/
+vendor/**/out/
+vendor/**/Debug/
+vendor/**/Release/
+vendor/**/CMakeFiles/
+vendor/**/cmake-build-*/
+vendor/**/.git/
+vendor/**/.idea/
 
 # Binary artifacts
 *.bin
@@ -33,6 +48,7 @@ sdkconfig.old
 *.exe
 *.pdb
 *.ilk
+*.zip
 
 # Secrets and local credentials
 .env

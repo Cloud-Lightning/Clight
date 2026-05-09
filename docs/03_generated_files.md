@@ -59,11 +59,15 @@ Wi-Fi SSID, passwords, BLE keys, tokens, and certificates must never be committe
 
 ## Vendor Stacks
 
-Protocol stacks and vendor packages can be used locally through `vendor/`, SDK environment variables, or product-level CMake. The public framework should not upload:
+Protocol stacks and vendor packages can be used locally through `vendor/`, SDK environment variables, or product-level CMake.
+
+The public framework may upload vendor-origin source only when Clight intentionally maintains a modified or frozen copy, for example `vendor/hpm` or `vendor/tinyusb`.
+
+The public framework should not upload:
 
 - STM32Cube HAL source trees
 - HPM SDK source trees
 - ESP-IDF build output
 - EtherCAT SSC generated vendor files
-- lwIP copied source trees unless the license and release policy are explicitly handled
+- unmodified full SDK mirrors
 - binary tools or local generated firmware images

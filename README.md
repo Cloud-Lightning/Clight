@@ -2,7 +2,7 @@
 
 Clight is a lightweight embedded C/C++ framework for keeping application and module code independent from chip vendor SDKs.
 
-The public repository contains the framework layer only. It does not publish generated HPM board packages, STM32CubeMX projects, ESP-IDF build output, vendor SDK mirrors, firmware images, or private credentials.
+The public repository contains the framework layer and the vendor-origin source that Clight intentionally maintains as modified local copies. It does not publish generated HPM board packages, STM32CubeMX projects, ESP-IDF build output, full SDK mirrors, firmware images, or private credentials.
 
 ## Repository Contents
 
@@ -13,6 +13,7 @@ The public repository contains the framework layer only. It does not publish gen
 - `bsp/port/esp32`: ESP-IDF backed BSP implementations.
 - `bsp/chip`: chip and board capability declarations.
 - `modules`: reusable devices and services built on top of Clight APIs.
+- `vendor`: maintained third-party or vendor-origin source used by Clight, such as adapted HPM lwIP/EtherCAT glue and TinyUSB.
 - `platforms`: minimal platform entry templates only.
 - `tools/clight_codegen`: C++ API generation tool.
 - `docs`: architecture, generated-file placement, porting, and release rules.
@@ -69,7 +70,7 @@ Clight does not vendor full chip SDKs. A real product workspace supplies:
 - STM32CubeMX/CubeCLT generated files for STM32.
 - HPM SDK and generated board files for HPM.
 - ESP-IDF environment for ESP32.
-- Optional protocol stacks or vendor packages through the product workspace.
+- Optional protocol stacks or vendor packages through the product workspace when they are not already maintained under `vendor/`.
 
 ## Documentation
 
@@ -91,7 +92,7 @@ git ls-files
 git grep -n -i "password\|secret\|token\|ssid\|private key"
 ```
 
-Do not stage `vendor/`, `build/`, `out/`, `Core/`, `Drivers/`, `sdkconfig`, `.hpmpc`, firmware images, map files, certificates, private keys, passwords, or tokens.
+Do not stage generated SDK output such as `build/`, `out/`, `Core/`, `Drivers/`, `sdkconfig`, `.hpmpc`, firmware images, map files, certificates, private keys, passwords, or tokens. Only stage `vendor/` files when they are source files that Clight intentionally maintains.
 
 ## Links
 

@@ -9,6 +9,7 @@ The public repository should contain framework code, not local generated project
 - `bsp/port`
 - `bsp/chip` capability headers without secrets
 - reusable `modules`
+- maintained source under `vendor/`, if Clight has modified or frozen it intentionally and licenses are preserved
 - code generation tools
 - platform templates
 - documentation
@@ -18,7 +19,7 @@ The public repository should contain framework code, not local generated project
 
 - `build/`, `out/`, `Debug/`, `Release/`
 - firmware images, map files, object files, and tool caches
-- `vendor/` SDK mirrors or local protocol-stack drops
+- full SDK mirrors or random local protocol-stack drops
 - STM32CubeMX generated `Core/Drivers` in the core framework repo
 - HPM generated `.hpmpc` files
 - ESP-IDF `sdkconfig` containing local settings or credentials

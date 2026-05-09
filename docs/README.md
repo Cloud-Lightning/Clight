@@ -10,4 +10,4 @@ Read in this order:
 4. `04_porting_checklist.md` - what to change when adding a new board or chip.
 5. `05_release_policy.md` - what is allowed in the public repository.
 
-The short rule is: Clight owns the API, BSP interfaces, reusable modules, and port code. Vendor SDKs, generated board packages, build outputs, credentials, and machine-local files stay outside the public framework repository.
+The short rule is: Clight owns the API, BSP interfaces, reusable modules, port code, and explicitly maintained vendor-origin source in `vendor/`. Full SDK mirrors, generated board packages, build outputs, credentials, and machine-local files stay outside the public framework repository.
