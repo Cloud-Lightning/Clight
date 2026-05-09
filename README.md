@@ -1,105 +1,100 @@
 # Clight
 
-Clight is a lightweight embedded C/C++ framework for keeping application code independent from chip vendor SDKs.
+Clight is a lightweight embedded C/C++ framework for keeping application and module code independent from chip vendor SDKs.
 
-The framework provides one public API surface for common MCU peripherals, while STM32, HPM, and ESP32 differences stay in BSP ports and board capability tables.
+The public repository contains the framework layer only. It does not publish generated HPM board packages, STM32CubeMX projects, ESP-IDF build output, vendor SDK mirrors, firmware images, or private credentials.
 
-## What This Repository Contains
+## Repository Contents
 
-- `bsp/interface`: stable C BSP interfaces and status/error types.
+- `bsp/interface`: unified C BSP interfaces and status/error types.
+- `bsp/api`: public C++ API wrappers used by application code.
 - `bsp/port/stm32`: STM32 HAL/LL backed BSP implementations.
 - `bsp/port/hpm`: HPM SDK backed BSP implementations.
 - `bsp/port/esp32`: ESP-IDF backed BSP implementations.
-- `bsp/chip`: board/chip capability declarations.
-- `bsp/api`: generated C++ API wrappers used by application code.
-- `modules`: reusable device and service modules such as BMI088, WS2812, TinyUSB, EtherCAT/LwIP wrappers, displays, and self-test.
-- `platforms`: minimal platform entry projects and board glue.
-- `tools/clight_codegen`: API generation tool.
-- `docs`: architecture notes, callback/DMA notes, and support matrices.
+- `bsp/chip`: chip and board capability declarations.
+- `modules`: reusable devices and services built on top of Clight APIs.
+- `platforms`: minimal platform entry templates only.
+- `tools/clight_codegen`: C++ API generation tool.
+- `docs`: architecture, generated-file placement, porting, and release rules.
 
-## What Is Intentionally Not Included
-
-This public repository intentionally does not include vendor SDK source trees or generated build outputs:
-
-- STM32CubeMX generated `Core/Drivers` folders are not published.
-- HPM SDK source trees are not published.
-- ESP-IDF build folders and generated `sdkconfig` files are not published.
-- `vendor/`, `build/`, `out/`, binary images, map files, object files, and local tool caches are ignored.
-- Secrets, tokens, passwords, Wi-Fi credentials, and private machine paths must stay outside the repository.
-
-## Supported Direction
-
-Clight separates the project into clear layers:
+## Architecture
 
 ```text
-Application / Modules
+Application / modules
         |
-Generated C++ API in bsp/api
+Clight C++ API: bsp/api
         |
-Unified C BSP interface in bsp/interface
+Clight C BSP interface: bsp/interface
         |
-Platform BSP port in bsp/port/<platform>
+Platform port: bsp/port/<platform>
         |
-Vendor SDK or HAL layer
+Vendor HAL / SDK / ESP-IDF
 ```
 
-Application code should include headers such as:
+Application code should include public API headers such as:
 
 ```cpp
 #include "Gpio.hpp"
 #include "Spi.hpp"
 #include "Uart.hpp"
 #include "Can.hpp"
-#include "Adc.hpp"
 ```
 
-Application code should not directly include STM32 HAL, HPM SDK, or ESP-IDF headers unless it is inside a platform BSP port.
+Application code should not directly include STM32 HAL, HPM SDK, or ESP-IDF headers unless it is inside a platform BSP port or a platform-specific extension.
 
-## Current Platform Coverage
+## Platform Templates
 
-- STM32H7: GPIO, Timer/PWM, SPI, I2C, UART, ADC16, FDCAN, CRC, RNG, RTC, watchdog interfaces, and unsupported-return stubs for unconfigured heavy peripherals.
-- HPM5E31: GPIO, Timer/PWM/PWMV2, SPI, I2C, UART, ADC16, MCAN, ENET/ECAT interfaces, CRC/EWDG, and board capability declarations.
-- ESP32-S3: GPIO, UART, SPI, I2C, ADC, Timer/PWM/LEDC, RMT/PCNT placeholders, USB Serial JTAG, Wi-Fi service, HTTP service, BLE service skeleton, and TinyUSB platform hooks.
+The checked-in `platforms` folder is intentionally minimal:
 
-Unsupported board resources must return `Status::Unsupported`; invalid parameters must return `Status::Param`. The framework should not silently fake success.
+- HPM board files must be generated locally into `platforms/hpm/boards/<board_name>/`.
+- STM32CubeMX output must be generated locally into `platforms/stm32/board/<board_name>/` or kept in a product repository.
+- ESP32 `sdkconfig`, `build/`, credentials, and managed components stay local.
 
-## Regenerating Public API
+See `docs/03_generated_files.md` before creating a real board project.
 
-The C++ API wrappers are generated from YAML manifests:
+## Behavior Contract
 
-```powershell
-python tools/clight_codegen/generate_cpp_api.py --config config/clight/stm32.yaml --out-root .
-python tools/clight_codegen/generate_cpp_api.py --config config/clight/hpm.yaml --out-root .
-python tools/clight_codegen/generate_cpp_api.py --config config/clight/esp32.yaml --out-root .
-```
+All BSP ports follow the same return rules:
 
-## Build Notes
+- `Ok`: the operation really succeeded or was really started.
+- `Unsupported`: the resource, pinmux, DMA channel, PHY, protocol stack, or board feature is not available.
+- `Param`: caller passed invalid arguments.
 
-This repository is framework-first. To build a real board project, provide the vendor SDK externally:
+The framework must not fake success and must not hide platform differences in the API layer.
 
-- STM32: generate or provide CubeMX `Core/Drivers`, startup, linker, and HAL configuration in your board project.
-- HPM: set up HPM SDK in the environment and point the platform CMake to it.
-- ESP32: build under ESP-IDF with the IDF environment activated.
+## Dependencies
 
-The checked-in `platforms` folder is a reference entry point, not a full vendor SDK mirror.
+Clight does not vendor full chip SDKs. A real product workspace supplies:
+
+- STM32CubeMX/CubeCLT generated files for STM32.
+- HPM SDK and generated board files for HPM.
+- ESP-IDF environment for ESP32.
+- Optional protocol stacks or vendor packages through the product workspace.
+
+## Documentation
+
+Start with:
+
+- `docs/01_architecture.md`
+- `docs/02_platform_workspace.md`
+- `docs/03_generated_files.md`
+- `docs/04_porting_checklist.md`
+- `docs/05_release_policy.md`
 
 ## Repository Hygiene
 
-Before publishing or pushing changes:
+Before publishing:
 
 ```powershell
 git status --short
 git ls-files
+git grep -n -i "password\|secret\|token\|ssid\|private key"
 ```
 
-Check that no files such as `sdkconfig`, `.env`, `*.pem`, `*.key`, `build/`, `vendor/`, `Core/`, or `Drivers/` are staged.
+Do not stage `vendor/`, `build/`, `out/`, `Core/`, `Drivers/`, `sdkconfig`, `.hpmpc`, firmware images, map files, certificates, private keys, passwords, or tokens.
 
-## Website
+## Links
 
-Project site:
+Framework repository: <https://github.com/Cloud-Lightning/Clight>
 
-https://github.com/Cloud-Lightning/Clight_Web
-
-Framework repository:
-
-https://github.com/Cloud-Lightning/Clight
+Website repository: <https://github.com/Cloud-Lightning/Clight_Web>

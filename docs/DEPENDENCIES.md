@@ -1,30 +1,12 @@
-# External Dependencies
+# Dependencies
 
-Clight does not vendor full chip SDKs in this repository.
+Clight does not vendor the full chip SDKs in this public repository.
 
-## STM32
+Required external dependencies depend on the target:
 
-Use STM32CubeMX or an existing board project to provide:
+- STM32: STM32CubeMX or STM32CubeCLT generated project files and STM32 HAL/LL drivers.
+- HPM: HPM SDK and a locally generated HPM board package.
+- ESP32: ESP-IDF environment.
+- EtherCAT/lwIP/TinyUSB/vendor protocol stacks: supplied by the product workspace or a separately managed dependency package when needed.
 
-- `Core/Inc`
-- `Core/Src`
-- `Drivers/CMSIS`
-- `Drivers/STM32H7xx_HAL_Driver`
-- startup file
-- linker script
-
-Keep generated CubeMX output in the consuming board project, not in this framework repository.
-
-## HPM
-
-Install HPM SDK separately and expose it through your normal HPM SDK environment variables or CMake toolchain setup.
-
-Optional HPM protocol stacks such as lwIP or EtherCAT SSC should be kept as external dependencies or mirrored in a private/vendor repository if licensing requires it.
-
-## ESP32
-
-Install ESP-IDF separately. Keep generated folders such as `build/`, `build_*`, and `sdkconfig` out of source control. Commit only stable defaults such as `sdkconfig.defaults`.
-
-## Secrets
-
-Do not commit Wi-Fi passwords, access tokens, certificates, private keys, or board-local credentials. Use local environment variables, private config files ignored by Git, or deployment-time provisioning.
+The framework API and BSP interfaces are kept in this repository. Large SDK source trees, generated files, and local tool outputs are intentionally excluded.
